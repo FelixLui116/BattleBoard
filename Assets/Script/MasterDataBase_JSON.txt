@@ -1,0 +1,19 @@
+{
+   "money":100,
+   "Master_1":{
+      "cost":8
+      "HP":6,
+      "damage":6,
+      "attackRange":0,
+      "attack_Direction":0,
+      "type":"Test"
+   },
+   "skill":[
+      
+   ],
+   "effect":[
+      
+   ],
+   "level":[
+   ]
+}
