@@ -16,6 +16,7 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 
     private bool mouseClick_bool = false;
 
+    public static Playerinfo Playerinfo_Instance;
     private void Awake() {
         Node_renderer = Node.gameObject.GetComponent<Renderer>();
     }
@@ -34,9 +35,17 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
     // private void OnMouse
     private void OnMouseEnter() {
         Debug.Log("In MouseEnter");
-        if (master_ != null){
+
+        // Destroy_Ghost();
+
+        if(Playerinfo.Instance.Get_player_SelectCard() !=null){
+            master_ = Playerinfo.Instance.Get_player_SelectCard();
+        }else{
             return;
         }
+        // if (master_ != null){
+        //     return;
+        // }
 
         if (mouseClick_bool){
             return;
@@ -45,28 +54,46 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         Node_renderer.material.color = Color.yellow;
         
         if (master_Ghost != null){
+            
+            if (master_Ghost.name != master_.name){
+                Destroy_Ghost();
+                CloneMasterGhost_func(master_); 
+            }
+
             master_Ghost.SetActive(true);
             
             return;
         }
-        CloneMasterGhost_func(TestClone); 
+
+        ////// 
+        // if (master_Ghost.name != master_.name)
+        // {
+        //     Destroy_Ghost();
+        // }
+        CloneMasterGhost_func(master_); 
     }
 
     void OnMouseDown()
     {
-        if (master_ != null){
+        if (master_ == null){
             return;
         }
+
+        if (mouseClick_bool == true) // cannot changed the Clicked clone object
+        {
+            return;
+        }
+
         mouseClick_bool = true;
         
         Node_renderer.material.color = Color.green;
         Debug.Log("Is mouse click");
-        CloneMaster(TestClone);
+        CloneMaster(master_);
     }
 
     private void OnMouseExit() {
         Debug.Log("In Mouse Exit");
-        if (master_ != null){
+        if (master_ == null){
             return;
         }
         
@@ -80,8 +107,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
             return;
         }
 
-        
         Node_renderer.material.color = Color.white;
+        
     }
 
     
@@ -114,6 +141,11 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         // GameObject go = this.gameObject.transform.GetChild(0).gameObject;
         // if(go.name.contains("_Ghost"))  tag?
 
+        // if (this.gameObject.transform.childCount == 1)
+        // {
+        //     return;
+        // }
+        // Debug.Log(this.gameObject.transform.childCount);
         Destroy(this.gameObject.transform.GetChild(1).gameObject);
     }
 
