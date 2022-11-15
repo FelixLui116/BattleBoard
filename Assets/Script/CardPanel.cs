@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 
 public class CardPanel : BasePanel
 {
+    private Button [] cardButton;
     // Start is called before the first frame update
     void Start()
     {

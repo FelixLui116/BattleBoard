@@ -9,6 +9,10 @@ public class Playerinfo : MonoBehaviour
 
     [SerializeField] private GameObject player_SelectCard;
 
+    public int playcost = 0;
+    
+    public bool isPlayTrun; 
+
 
     public GameObject Get_player_SelectCard(){
         return player_SelectCard;
