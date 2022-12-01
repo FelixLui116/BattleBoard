@@ -9,16 +9,17 @@ public class BaseCard : MonoBehaviour
     private CardMove cardmove;
     // private bool card_Panel_bool = false;
 
-    [SerializeField] private GameObject masterPrefab;
-    private BaseMaster masterOject_BM;
+    [SerializeField] private GameObject MonsterPrefab;
+    private BaseMonster MonsterOject_BM;
 
-    [SerializeField] private string master_string = "Master_Test"; 
+    [SerializeField] private string Monster_string = "Monster_Test"; 
 
     // Card info
     private int hp,damage,cost,attackRange,attackDirection;
     [SerializeField] private Text [] textlist; // hp,damage,cost,attackRange,attackDirection;
     private string type;
 
+    public int card_number;
 
     private bool cardClick = false;
     public static Playerinfo Playerinfo_Instance;
@@ -29,8 +30,8 @@ public class BaseCard : MonoBehaviour
         
         cardmove = gameObject.GetComponent<CardMove>();
 
-        masterPrefab = Resources.Load<GameObject>("Prefabs/Master/"+ master_string);
-        masterOject_BM  = masterPrefab.gameObject.GetComponent<BaseMaster>();
+        MonsterPrefab = Resources.Load<GameObject>("Prefabs/Monster/"+ Monster_string);
+        MonsterOject_BM  = MonsterPrefab.gameObject.GetComponent<BaseMonster>();
         CardInfo_update();
 
         cardbutton.onClick.AddListener(OnClick_card);
@@ -50,10 +51,12 @@ public class BaseCard : MonoBehaviour
     public void OnClick_card(){
         Debug.Log("Card on click");
         // update Selectcard
-        if (Playerinfo.Instance.Get_player_SelectCard() != null &&  Playerinfo.Instance.Get_player_SelectCard() == masterPrefab ){
+        if (Playerinfo.Instance.Get_player_SelectCard() != null &&  Playerinfo.Instance.Get_player_SelectCard() == MonsterPrefab ){
             return;
         }else{
-            Playerinfo.Instance.Set_player_SelectCard(masterPrefab);
+            
+            Debug.Log("Get MonsterPrefab: " + MonsterPrefab.name);
+            Playerinfo.Instance.Set_player_SelectCard(MonsterPrefab);
         }
         // if (card_Panel_bool)
         // {
@@ -68,12 +71,12 @@ public class BaseCard : MonoBehaviour
     private void CardInfo_update(){
         
         //   hp,damage,cost,attackRange,attackDirection;  type
-        hp = masterOject_BM.Get_Hp();
-        damage = masterOject_BM.Get_Damage();
-        cost = masterOject_BM.Get_Cost();
-        attackRange = masterOject_BM.Get_AttackRange();
-        attackDirection = masterOject_BM.Get_AttackDirection();
-        type = masterOject_BM.Get_Type();
+        hp = MonsterOject_BM.Get_Hp();
+        damage = MonsterOject_BM.Get_Damage();
+        cost = MonsterOject_BM.Get_Cost();
+        attackRange = MonsterOject_BM.Get_AttackRange();
+        attackDirection = MonsterOject_BM.Get_AttackDirection();
+        type = MonsterOject_BM.Get_Type();
         
         
         textlist[0].text = hp.ToString();

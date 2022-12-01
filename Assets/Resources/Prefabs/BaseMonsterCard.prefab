@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 1538650981712988602}
   - component: {fileID: 264247877}
   m_Layer: 5
-  m_Name: BaseMasterCard
+  m_Name: BaseMonsterCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

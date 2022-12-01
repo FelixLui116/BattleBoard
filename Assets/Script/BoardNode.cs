@@ -7,18 +7,23 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 {
     private Renderer Node_renderer;
 
-    [SerializeField] private GameObject master_;
+    [SerializeField] private GameObject Monster_;
 
     public GameObject TestClone;
     [SerializeField] private GameObject Node;
+    [SerializeField] private Vector2 NodePosition;
 
-    private GameObject master_Ghost;
+    private GameObject Monster_Ghost;
 
     private bool mouseClick_bool = false;
 
     public static Playerinfo Playerinfo_Instance;
     private void Awake() {
         Node_renderer = Node.gameObject.GetComponent<Renderer>();
+    }
+
+    public void SetNodePosition(int x, int y){
+        NodePosition = new Vector2(x ,y);
     }
     // Start is called before the first frame update
     void Start()
@@ -39,11 +44,11 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         // Destroy_Ghost();
 
         if(Playerinfo.Instance.Get_player_SelectCard() !=null){
-            master_ = Playerinfo.Instance.Get_player_SelectCard();
+            Monster_ = Playerinfo.Instance.Get_player_SelectCard();
         }else{
             return;
         }
-        // if (master_ != null){
+        // if (Monster_ != null){
         //     return;
         // }
 
@@ -53,29 +58,29 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         
         Node_renderer.material.color = Color.yellow;
         
-        if (master_Ghost != null){
+        if (Monster_Ghost != null){
             
-            if (master_Ghost.name != master_.name){
+            if (Monster_Ghost.name != Monster_.name){
                 Destroy_Ghost();
-                CloneMasterGhost_func(master_); 
+                CloneMonsterGhost_func(Monster_); 
             }
 
-            master_Ghost.SetActive(true);
+            Monster_Ghost.SetActive(true);
             
             return;
         }
 
         ////// 
-        // if (master_Ghost.name != master_.name)
+        // if (Monster_Ghost.name != Monster_.name)
         // {
         //     Destroy_Ghost();
         // }
-        CloneMasterGhost_func(master_); 
+        CloneMonsterGhost_func(Monster_); 
     }
 
     void OnMouseDown()
     {
-        if (master_ == null){
+        if (Monster_ == null){
             return;
         }
 
@@ -88,19 +93,20 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         
         Node_renderer.material.color = Color.green;
         Debug.Log("Is mouse click");
-        CloneMaster(master_);
+        Playerinfo.Instance.Clean_SeletcCard();
+        CloneMonster(Monster_);
     }
 
     private void OnMouseExit() {
         Debug.Log("In Mouse Exit");
-        if (master_ == null){
+        if (Monster_ == null){
             return;
         }
         
-        if (master_Ghost == null){
+        if (Monster_Ghost == null){
             return;
         }else{
-            master_Ghost.SetActive(false);
+            Monster_Ghost.SetActive(false);
         }
 
         if (mouseClick_bool){
@@ -112,29 +118,29 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
     }
 
     
-    private void CloneMasterGhost_func(GameObject prefab){
+    private void CloneMonsterGhost_func(GameObject prefab){
         GameObject go;
         go = GameObject.Instantiate(prefab, this.gameObject.transform.position, Quaternion.identity , this.gameObject.transform);
         // go.transform.position = new Vector3(0 ,0 ,0);
         go.name += "_Ghost";
         go.transform.localScale = new Vector3(10 , 10 , 10);
-        master_Ghost = go;
+        Monster_Ghost = go;
 
         // NEED ADD model 
     }
 
     private void Destroy_Ghost(){
-        //string ghostName = master_Ghost.name;
+        //string ghostName = Monster_Ghost.name;
         // GameObject Object = this.gameObject;
         // for (int i = 0; i < Object.transform.childCount; i++)
         // {
         //     Debug.Log( Object.transform.GetChild(i).gameObject.name );
-        //     if (Object.transform.GetChild(i).gameObject.name == master_Ghost.name + "(Clone)_Ghost" )
+        //     if (Object.transform.GetChild(i).gameObject.name == Monster_Ghost.name + "(Clone)_Ghost" )
         //     {
                 
         //         Destroy(this.gameObject.transform.GetChild(i).gameObject);
         //     }
-        //     // string M_name = master_Ghost.name;
+        //     // string M_name = Monster_Ghost.name;
         // }
 
 
@@ -149,9 +155,9 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         Destroy(this.gameObject.transform.GetChild(1).gameObject);
     }
 
-    public void CloneMaster(GameObject go){
-        GameObject masterclone = Instantiate(go, transform.position, transform.rotation , this.gameObject.transform);
-        masterclone.transform.localScale = new Vector3(10 , 10 , 10);
+    public void CloneMonster(GameObject go){
+        GameObject Monsterclone = Instantiate(go, transform.position, transform.rotation , this.gameObject.transform);
+        Monsterclone.transform.localScale = new Vector3(10 , 10 , 10);
 
         Destroy_Ghost();
     }

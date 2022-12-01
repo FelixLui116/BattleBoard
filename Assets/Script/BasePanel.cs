@@ -17,7 +17,7 @@ public class BasePanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // TestObject = Resources.Load<GameObject>("Prefabs/Master_Test.prefab"); Prefabs/Master/Master_Test.prefab
+        // TestObject = Resources.Load<GameObject>("Prefabs/Monster_Test.prefab"); Prefabs/Monster/Monster_Test.prefab
     }
 
     // Update is called once per frame
@@ -32,4 +32,7 @@ public class BasePanel : MonoBehaviour
     public void closePanel_func() {
         this.gameObject.SetActive(false);
     }
+    // public void CancelSeleteCard_func (){
+        
+    // }
 }

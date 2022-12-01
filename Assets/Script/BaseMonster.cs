@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class BaseMaster : NetworkBehaviour
+public class BaseMonster : NetworkBehaviour
 {
     [SerializeField] private int damage = 0;
     [SerializeField] private int attackRange =1;
@@ -13,6 +13,7 @@ public class BaseMaster : NetworkBehaviour
     [SerializeField] private int cost = 0;
     [SerializeField] private int HP = 0;
     [SerializeField] private string type = "Test";
+    [SerializeField] private string cardNum;
 
 
     // Start is called before the first frame update

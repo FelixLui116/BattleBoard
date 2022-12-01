@@ -1,6 +1,6 @@
 {
    "money":100,
-   "Master_1":{
+   "Monster_1":{
       "cost":8
       "HP":6,
       "damage":6,
