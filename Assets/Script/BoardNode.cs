@@ -18,6 +18,9 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
     private bool mouseClick_bool = false;
 
     public static Playerinfo Playerinfo_Instance;
+
+    private NetworkVariable<Vector3> NodeColor = new NetworkVariable<Vector3>();
+
     private void Awake() {
         Node_renderer = Node.gameObject.GetComponent<Renderer>();
     }
@@ -57,7 +60,10 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         }
         
         Node_renderer.material.color = Color.yellow;
-        
+        // NodeColor = new Color (255,255,0);
+        // NodeColor.Set(255f,255f,0f);
+        // NodeColor.OnValueChanged += OnSomeValueChanged;
+
         if (Monster_Ghost != null){
             
             if (Monster_Ghost.name != Monster_.name){
@@ -121,6 +127,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
     private void CloneMonsterGhost_func(GameObject prefab){
         GameObject go;
         go = GameObject.Instantiate(prefab, this.gameObject.transform.position, Quaternion.identity , this.gameObject.transform);
+        
+        go.GetComponent<NetworkObject>().Spawn(true);
         // go.transform.position = new Vector3(0 ,0 ,0);
         go.name += "_Ghost";
         go.transform.localScale = new Vector3(10 , 10 , 10);
@@ -157,8 +165,29 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 
     public void CloneMonster(GameObject go){
         GameObject Monsterclone = Instantiate(go, transform.position, transform.rotation , this.gameObject.transform);
+        
+        Monsterclone.GetComponent<NetworkObject>().Spawn(true);
         Monsterclone.transform.localScale = new Vector3(10 , 10 , 10);
 
         Destroy_Ghost();
+    }
+
+    private void OnSomeValueChanged(int previous, int current)
+    {
+        Debug.Log($"Detected NetworkVariable Change: Previous: {previous} | Current: {current}");
+    }
+
+    [ServerRpc()]
+    private void TestServerRpc(){
+        Debug.Log("-- TestServerRpc "+ OwnerClientId);
+    }
+    // private void ChangeColorClientRpc(Renderer randerer, Color _color){
+    //     // randerer.material.SetColor(_color);
+    // }
+
+    [ClientRpc]
+    private void TestingClientRpc( )
+    {
+        Debug.Log("-- is TestingClientRpc");
     }
 }
