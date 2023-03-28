@@ -57,7 +57,12 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         }
         
         // Node_renderer.material.color = Color.yellow;
-        ChangeColorFunc_Green_ServerRpc(Color.yellow);
+        if (IsHost){
+            ColorServerToClient_ClientRpc(Color.yellow);
+        }else{
+            ChangeColorFunc_Green_ServerRpc(Color.yellow);
+        }
+            
         
         if (Monster_Ghost != null){
             
