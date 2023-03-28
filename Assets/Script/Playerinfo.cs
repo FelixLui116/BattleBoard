@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Playerinfo : MonoBehaviour
+public class Playerinfo : NetworkBehaviour
 {
     // Start is called before the first frame update
     public static Playerinfo Instance { get; private set; }
@@ -16,6 +17,7 @@ public class Playerinfo : MonoBehaviour
 
     public int playcost = 0;
     
+    public int playerID;
     public bool isPlayTrun; 
 
     [SerializeField] private CardPanel cardPanel; 
@@ -38,12 +40,22 @@ public class Playerinfo : MonoBehaviour
         if (Instance == null){
             Instance = this;
         }
+
     }
     void Start()
     {
         givecardDeck_player();
+        
     }
 
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        
+        Debug.Log("IsClient: "+ NetworkManager.Singleton.IsClient);
+        Debug.Log("IsHost: "+ NetworkManager.Singleton.IsHost);
+        Debug.Log("IsClient: "+ OwnerClientId ); 
+    }
     // Update is called once per frame
     void Update()
     {

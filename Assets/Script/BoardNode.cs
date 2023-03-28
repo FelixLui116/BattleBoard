@@ -56,7 +56,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
             return;
         }
         
-        Node_renderer.material.color = Color.yellow;
+        // Node_renderer.material.color = Color.yellow;
+        ChangeColorFunc_Green_ServerRpc(Color.yellow);
         
         if (Monster_Ghost != null){
             
@@ -77,6 +78,26 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         // }
         CloneMonsterGhost_func(Monster_); 
     }
+
+    [ServerRpc]
+    private void ChangeColorFunc_Green_ServerRpc(Color _c){
+        Debug.Log("Launch on Server");
+        Node_renderer.material.color = _c;
+
+        // if(!IsHost){
+        //     ColorServerToClient_ClientRpc(_c);
+        // }
+    }
+
+    [ClientRpc]
+    private void ColorServerToClient_ClientRpc(Color _c)
+    {
+        Debug.Log("Launch on ClientRpc");
+        Node_renderer.material.color = Color.yellow;
+    }
+
+
+
 
     void OnMouseDown()
     {
