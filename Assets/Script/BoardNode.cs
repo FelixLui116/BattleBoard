@@ -59,11 +59,14 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
             return;
         }
         
-        Node_renderer.material.color = Color.yellow;
-        // NodeColor = new Color (255,255,0);
-        // NodeColor.Set(255f,255f,0f);
-        // NodeColor.OnValueChanged += OnSomeValueChanged;
-
+        // Node_renderer.material.color = Color.yellow;
+        if (IsHost){
+            ColorServerToClient_ClientRpc(Color.yellow);
+        }else{
+            ChangeColorFunc_Green_ServerRpc(Color.yellow);
+        }
+            
+        
         if (Monster_Ghost != null){
             
             if (Monster_Ghost.name != Monster_.name){
@@ -83,6 +86,26 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         // }
         CloneMonsterGhost_func(Monster_); 
     }
+
+    [ServerRpc]
+    private void ChangeColorFunc_Green_ServerRpc(Color _c){
+        Debug.Log("Launch on Server");
+        Node_renderer.material.color = _c;
+
+        // if(!IsHost){
+        //     ColorServerToClient_ClientRpc(_c);
+        // }
+    }
+
+    [ClientRpc]
+    private void ColorServerToClient_ClientRpc(Color _c)
+    {
+        Debug.Log("Launch on ClientRpc");
+        Node_renderer.material.color = Color.yellow;
+    }
+
+
+
 
     void OnMouseDown()
     {

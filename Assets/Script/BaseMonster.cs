@@ -15,17 +15,18 @@ public class BaseMonster : NetworkBehaviour
     [SerializeField] private string type = "Test";
     [SerializeField] private string cardNum;
 
-
+    private readonly NetworkVariable<Vector3> _newPos = new(writePerm: NetworkVariableWritePermission.Owner);
+    private readonly NetworkVariable<Quaternion> _newRot = new(writePerm: NetworkVariableWritePermission.Owner);
     // Start is called before the first frame update
     void Start()
     {
-        
+        Position_update();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public int Get_Hp(){
@@ -45,5 +46,17 @@ public class BaseMonster : NetworkBehaviour
     }
     public int Get_AttackDirection(){
         return attackDirection;
+    }
+
+    public void Position_update(){
+        if (IsOwner){       // update to server position
+            _newPos.Value = transform.position;
+            _newRot.Value = transform.rotation;
+
+        }
+        else{
+            transform.position =  _newPos.Value;
+            transform.rotation = _newRot.Value;
+        }
     }
 }

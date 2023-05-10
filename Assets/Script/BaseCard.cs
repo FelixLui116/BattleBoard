@@ -57,6 +57,7 @@ public class BaseCard : MonoBehaviour
             
             Debug.Log("Get MonsterPrefab: " + MonsterPrefab.name);
             Playerinfo.Instance.Set_player_SelectCard(MonsterPrefab);
+            
         }
         // if (card_Panel_bool)
         // {
