@@ -14,7 +14,7 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
     [SerializeField] private Vector2 NodePosition;
 
     // private GameObject Monster_Ghost;
-    private NetworkObject Monster_Ghost;
+    [SerializeField] private NetworkObject Monster_Ghost;
 
     private bool mouseClick_bool = false;
 
@@ -73,7 +73,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
             
             if (Monster_Ghost.gameObject.name != Monster_.name){
                 Destroy_Ghost(Monster_Ghost.gameObject);
-                CloneMonsterGhost_func(Monster_); 
+                // CloneMonsterGhost_func(Monster_); 
+                AddClone_func(Monster_);
             }
 
             // Monster_Ghost.gameObject.SetActive(true);
@@ -81,7 +82,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
             return;
         }
 
-        CloneMonsterGhost_func(Monster_); 
+        // CloneMonsterGhost_func(Monster_); 
+        AddClone_func(Monster_);
     }
 
 
@@ -163,10 +165,12 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         ulong networkObjectId = n_obj.NetworkObjectId;
         if (IsServer)
         {
-            AddClone_func_ClientRpc(networkObjectId);
+            // AddClone_func_ClientRpc(networkObjectId);
+            CloneMonsterGhost_func(go);
         }
         else if (IsClient)
         {
+            Debug.Log("Launch on AddClone_func");
             AddClone_func_ServerRpc(networkObjectId);
         }
     }
@@ -174,22 +178,25 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
     [ServerRpc(RequireOwnership = false)] // Allow client edit to server
     private void AddClone_func_ServerRpc(ulong networkObjectId)
     {
-        Debug.Log("Launch on Server");
-
-        AddClone_func_ClientRpc(networkObjectId);
-    }
-    [ClientRpc]
-    private void AddClone_func_ClientRpc(ulong networkObjectId)
-    {
-        Debug.Log("Launch on ClientRpc");
-        NetworkObject no = null;
+        // AddClone_func_ClientRpc(networkObjectId);
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject clientNetworkObject))
         {
-            no = clientNetworkObject;
+            Debug.Log("==clientNetworkObject.gameObject.name: " + clientNetworkObject.gameObject.name);
+            CloneMonsterGhost_func(clientNetworkObject.gameObject);
         }
-        GameObject go = no.gameObject;
-        CloneMonsterGhost_func(go);
     }
+    // [ClientRpc]
+    // private void AddClone_func_ClientRpc(ulong networkObjectId)
+    // {
+    //     Debug.Log("Launch on ClientRpc");
+    //     NetworkObject no = null;
+    //     if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject clientNetworkObject))
+    //     {
+    //         no = clientNetworkObject;
+    //     }
+    //     GameObject go = no.gameObject;
+    //     CloneMonsterGhost_func(go);
+    // }
 
     private void CloneMonsterGhost_func(GameObject prefab){
         // GameObject go;
@@ -206,7 +213,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         NetworkObject networkObject = spawnedTestObject_clone.GetComponent<NetworkObject>();
         networkObject.transform.localScale = new Vector3(10, 10, 10);
         networkObject.name += "_Ghost";
-        networkObject.Spawn(true);
+        // networkObject.Spawn(true);
+        networkObject.SpawnWithOwnership(OwnerClientId);
         networkObject.gameObject.SetActive(true);
         
         // networkObject.SpawnAsPlayerObject(NetworkManager.Singleton.LocalClientId);
@@ -239,9 +247,14 @@ private void AddObjectToClient(ulong networkObjectId){
         }
     }
     [ServerRpc(RequireOwnership = false)] // Allow client to add object to server
-    public void AddObjectServerRpc(ulong  tarage_obj)
+    public void AddObjectServerRpc(ulong  networkObjectId)
     {
-        AddObjectClientRpc(tarage_obj);
+        // AddObjectClientRpc(tarage_obj);
+        // 在客户端中根据网络标识符查找相应的网络对象
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject clientNetworkObject))
+        {
+            Monster_Ghost = clientNetworkObject;
+        }
     }
     [ClientRpc]
     public void AddObjectClientRpc(ulong networkObjectId)
