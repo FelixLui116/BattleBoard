@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.Networking;
 
 public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 {
-    private Renderer Node_renderer;
+    [SerializeField] private Renderer Node_renderer;
 
     [SerializeField] private GameObject Monster_;
 
@@ -89,6 +90,7 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 
     // change Node Color
     private void ChangeColor_func(Color c){
+        Debug.Log("In ChangeColor_func A");
         if (IsServer)
         {
             ChangeColor_func_ClientRpc(c);
@@ -96,13 +98,16 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         else if (IsClient)
         {
             ChangeColor_func_ServerRpc(c);
-        };
+        }
     }
 
     [ServerRpc(RequireOwnership = false)] // Allow client edit to server
     private void ChangeColor_func_ServerRpc(Color _c){
         Debug.Log("Launch on Server");
-        Node_renderer.material.color = _c;
+        if (IsServer)
+        {
+            ChangeColor_func_ClientRpc(_c);
+        }
     }
     [ClientRpc]
     private void ChangeColor_func_ClientRpc(Color _c)
