@@ -75,7 +75,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
             if (Monster_Ghost.gameObject.name != Monster_.name){
                 Destroy_Ghost(Monster_Ghost.gameObject);
                 // CloneMonsterGhost_func(Monster_); 
-                AddClone_func(Monster_);
+                // AddClone_func(Monster_);  // not working 
+                CreateCloneMonsterGhost();
             }
 
             // Monster_Ghost.gameObject.SetActive(true);
@@ -84,7 +85,8 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
         }
 
         // CloneMonsterGhost_func(Monster_); 
-        AddClone_func(Monster_);
+        // AddClone_func(Monster_); // not working 
+        CreateCloneMonsterGhost();
     }
 
 
@@ -160,11 +162,48 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 
         // Node_renderer.material.color = Color.white;
         ChangeColor_func(Color.white);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+
+    public void CreateCloneMonsterGhost(){
+        Debug.Log("In CreateCloneMonsterGhost");
+        if (IsServer)
+        {
+            CreateCloneMonsterGhost_func();
+        }
+        else
+        {
+            CreateCloneMonsterGhost_func_ServerRpc();
+        }
+    }
+    [ServerRpc(RequireOwnership = false)] // Allow client to request object cloning
+    public void CreateCloneMonsterGhost_func_ServerRpc(){
+        CreateCloneMonsterGhost_func();
+    }
+
+    public void CreateCloneMonsterGhost_func(){
+        GameObject clone = Playerinfo.Instance.Get_player_SelectCard();
+        GameObject spawnedTestObject_clone = GameObject.Instantiate(clone, this.gameObject.transform.position, Quaternion.identity , this.gameObject.transform);
+        NetworkObject networkObject = spawnedTestObject_clone.GetComponent<NetworkObject>();
+        networkObject.transform.localScale = new Vector3(10, 10, 10);
+        networkObject.name += "_Ghost";
+        networkObject.Spawn(true);
+        // networkObject.SpawnAsPlayerObject(networkObject.OwnerClientId);
+        networkObject.gameObject.SetActive(true);
         
+        // networkObject.SpawnAsPlayerObject(NetworkManager.Singleton.LocalClientId);
+        ulong networkObjectId = networkObject.NetworkObjectId;
+        Debug.Log("Network Object ID: " + networkObjectId);
     }
 
 
-     // Add Clone
+
+
+    //=========================================================================================================
+    // Add Clone   NOT WORKING ===================================
     private void AddClone_func(GameObject go){
         NetworkObject n_obj = go.GetComponent<NetworkObject>();
         ulong networkObjectId = n_obj.NetworkObjectId;
@@ -246,6 +285,12 @@ public class BoardNode : NetworkBehaviour // NetworkBehaviour MonoBehaviour
 
         // NEED ADD model 
     }
+    
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////////////////////
 /////////////  add object to client
